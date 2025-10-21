@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, Scissors, Package, DollarSign } from "lucide-react";
 
 export default function Dashboard() {
+  const { isOwner } = useAuth();
+  const navigate = useNavigate();
   const [stats, setStats] = useState({
     totalBarbers: 0,
     totalServices: 0,
@@ -12,8 +16,12 @@ export default function Dashboard() {
   });
 
   useEffect(() => {
-    loadStats();
-  }, []);
+    if (!isOwner) {
+      navigate('/transactions');
+    } else {
+      loadStats();
+    }
+  }, [isOwner, navigate]);
 
   const loadStats = async () => {
     const [barbersRes, servicesRes, productsRes, transactionsRes] = await Promise.all([

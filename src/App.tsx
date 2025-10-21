@@ -11,6 +11,7 @@ import Products from "./pages/Products";
 import Transactions from "./pages/Transactions";
 import History from "./pages/History";
 import Reports from "./pages/Reports";
+import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
+          <Route path="/auth" element={<Auth />} />
           <Route path="/" element={<Layout><Dashboard /></Layout>} />
           <Route path="/barbers" element={<Layout><Barbers /></Layout>} />
           <Route path="/services" element={<Layout><Services /></Layout>} />
