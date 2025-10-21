@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { Home, Users, Scissors, Package, Receipt, History, DollarSign } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 import {
   Sidebar,
   SidebarContent,
@@ -12,19 +13,27 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 
-const items = [
-  { title: "Dashboard", url: "/", icon: Home },
-  { title: "Pemotong", url: "/barbers", icon: Users },
-  { title: "Jasa", url: "/services", icon: Scissors },
-  { title: "Produk", url: "/products", icon: Package },
-  { title: "Transaksi", url: "/transactions", icon: Receipt },
-  { title: "Riwayat", url: "/history", icon: History },
-  { title: "Laporan Gaji", url: "/reports", icon: DollarSign },
-];
-
 export function AppSidebar() {
   const { state } = useSidebar();
+  const { isOwner } = useAuth();
   const isCollapsed = state === "collapsed";
+
+  const ownerItems = [
+    { title: "Dashboard", url: "/", icon: Home },
+    { title: "Pemotong", url: "/barbers", icon: Users },
+    { title: "Jasa", url: "/services", icon: Scissors },
+    { title: "Produk", url: "/products", icon: Package },
+    { title: "Transaksi", url: "/transactions", icon: Receipt },
+    { title: "Riwayat", url: "/history", icon: History },
+    { title: "Laporan Gaji", url: "/reports", icon: DollarSign },
+  ];
+
+  const cashierItems = [
+    { title: "Transaksi", url: "/transactions", icon: Receipt },
+    { title: "Riwayat Saya", url: "/history", icon: History },
+  ];
+
+  const items = isOwner ? ownerItems : cashierItems;
 
   return (
     <Sidebar className={isCollapsed ? "w-14" : "w-60"} collapsible="icon">
