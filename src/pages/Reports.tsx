@@ -1,13 +1,10 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
 
 type BarberEarnings = {
   barber_id: string;
@@ -17,25 +14,13 @@ type BarberEarnings = {
 };
 
 export default function Reports() {
-  const { isOwner } = useAuth();
-  const navigate = useNavigate();
-  const { toast } = useToast();
   const [barberEarnings, setBarberEarnings] = useState<BarberEarnings[]>([]);
   const [period, setPeriod] = useState<"daily" | "weekly" | "monthly">("daily");
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
 
   useEffect(() => {
-    if (!isOwner) {
-      navigate('/transactions');
-      toast({
-        title: 'Akses Ditolak',
-        description: 'Anda tidak memiliki akses ke halaman ini.',
-        variant: 'destructive',
-      });
-    } else {
-      loadEarnings();
-    }
-  }, [isOwner, navigate]);
+    loadEarnings();
+  }, [period, selectedDate]);
 
   const getDateRange = () => {
     const date = new Date(selectedDate);

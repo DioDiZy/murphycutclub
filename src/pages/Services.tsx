@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,8 +14,6 @@ type Service = {
 };
 
 export default function Services() {
-  const { isOwner } = useAuth();
-  const navigate = useNavigate();
   const [services, setServices] = useState<Service[]>([]);
   const [serviceName, setServiceName] = useState("");
   const [price, setPrice] = useState("");
@@ -25,17 +21,8 @@ export default function Services() {
   const { toast } = useToast();
 
   useEffect(() => {
-    if (!isOwner) {
-      navigate('/transactions');
-      toast({
-        title: 'Akses Ditolak',
-        description: 'Anda tidak memiliki akses ke halaman ini.',
-        variant: 'destructive',
-      });
-    } else {
-      loadServices();
-    }
-  }, [isOwner, navigate]);
+    loadServices();
+  }, []);
 
   const loadServices = async () => {
     const { data, error } = await supabase.from("services").select("*").order("created_at", { ascending: false });

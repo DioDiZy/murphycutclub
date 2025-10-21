@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
@@ -18,51 +17,22 @@ type Transaction = {
 };
 
 export default function History() {
-  const { user, isOwner } = useAuth();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [userBarberId, setUserBarberId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (user && !isOwner) {
-      loadUserBarber();
-    } else {
-      loadTransactions();
-    }
-  }, [user, isOwner]);
+    loadTransactions();
+  }, []);
 
-  const loadUserBarber = async () => {
-    if (!user) return;
-    
+  const loadTransactions = async () => {
     const { data, error } = await supabase
-      .from("barbers")
-      .select("id")
-      .eq("user_id", user.id)
-      .single();
-
-    if (error) {
-      console.error(error);
-    } else if (data) {
-      setUserBarberId(data.id);
-      loadTransactions(data.id);
-    }
-  };
-
-  const loadTransactions = async (barberId?: string) => {
-    let query = supabase
       .from("transactions")
       .select(`
         *,
         barbers (name),
         services (service_name),
         products (product_name)
-      `);
-
-    // If cashier, filter by their barber_id
-    if (barberId) {
-      query = query.eq("barber_id", barberId);
-    }
-
-    const { data, error } = await query.order("transaction_date", { ascending: false });
+      `)
+      .order("transaction_date", { ascending: false });
 
     if (error) {
       console.error(error);
@@ -73,9 +43,7 @@ export default function History() {
 
   return (
     <div>
-      <h2 className="text-3xl font-bold text-foreground mb-8">
-        {isOwner ? 'Riwayat Transaksi' : 'Riwayat Transaksi Saya'}
-      </h2>
+      <h2 className="text-3xl font-bold text-foreground mb-8">Riwayat Transaksi</h2>
       
       <div className="space-y-4">
         {transactions.map((transaction) => (
